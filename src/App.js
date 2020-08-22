@@ -31,17 +31,21 @@ function getTitle(title) {
 }
 
 
-const Item = ({ title, url, author, num_comments, points }) => (
+const Item = ({ title, url, author, num_comments, points, other }) => (
   <div>
     <span>
       <a href={url}>{title}</a>
     </span>
     <span>{author}</span>
+    <span>{other}</span>
   </div>
 )
 
-const List = ({ list }) =>
-  list.map(item => <Item key={item.objectID} {...item} />)
+
+
+const Thing = ({thingsprops}) => <div>{thingsprops.id}A beautiful thing</div>
+
+const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other}/>)
 
 const Search = ({ search, onSearch }) => {
 
@@ -57,8 +61,26 @@ const Search = ({ search, onSearch }) => {
 }
 
 const App = () => {
-  const handleChange = event => { console.log(event.target.value); setSearchTerm(event.target.value) }
-  const [searchTerm, setSearchTerm] = React.useState('')
+  const ThingsProps = {
+    id: 'MY ID',
+    super : 'My SUPER'
+  }
+
+
+  
+  const handleChange = ({target}) => { 
+    setSearchTerm(target.value) 
+  }
+
+  const [searchTerm, setSearchTerm] = React.useState(
+    localStorage.getItem('search') || 'React'
+  );
+
+  React.useEffect(()=>{
+    localStorage.setItem('search', searchTerm )
+  }, [searchTerm])
+
+
   const stories = [
     {
       title: 'React',
@@ -85,10 +107,11 @@ const App = () => {
   )
   return (
     <div style={styles}>
+      <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
       <Search onSearch={handleChange} search={searchTerm} />
 
-      <List list={searchedStories} />
+      <List list={searchedStories} other="Beautiful"/>
 
 
 
