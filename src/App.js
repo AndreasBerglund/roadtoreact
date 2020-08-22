@@ -113,8 +113,6 @@ const App = () => {
 
       <List list={searchedStories} other="Beautiful" />
 
-
-
     </div>
   )
 }
