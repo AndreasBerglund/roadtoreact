@@ -43,9 +43,9 @@ const Item = ({ title, url, author, num_comments, points, other }) => (
 
 
 
-const Thing = ({thingsprops}) => <div>{thingsprops.id}A beautiful thing</div>
+const Thing = ({ thingsprops: { id, not_super } }) => <div>{id} : {not_super}A beautiful thing</div>
 
-const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other}/>)
+const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other} />)
 
 const Search = ({ search, onSearch }) => {
 
@@ -63,21 +63,21 @@ const Search = ({ search, onSearch }) => {
 const App = () => {
   const ThingsProps = {
     id: 'MY ID',
-    super : 'My SUPER'
+    not_super: 'My SUPER'
   }
 
 
-  
-  const handleChange = ({target}) => { 
-    setSearchTerm(target.value) 
+
+  const handleChange = ({ target: { value } }) => {
+    setSearchTerm(value)
   }
 
   const [searchTerm, setSearchTerm] = React.useState(
     localStorage.getItem('search') || 'React'
   );
 
-  React.useEffect(()=>{
-    localStorage.setItem('search', searchTerm )
+  React.useEffect(() => {
+    localStorage.setItem('search', searchTerm)
   }, [searchTerm])
 
 
@@ -111,7 +111,7 @@ const App = () => {
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
       <Search onSearch={handleChange} search={searchTerm} />
 
-      <List list={searchedStories} other="Beautiful"/>
+      <List list={searchedStories} other="Beautiful" />
 
 
 
