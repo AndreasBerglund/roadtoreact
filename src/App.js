@@ -41,19 +41,35 @@ const Item = ({ title, url, author, num_comments, points, other }) => (
   </div>
 )
 
+const InputWithLabel = ({id, type = 'text', value, onInputChange, children}) => (
+  <>
+  <label htmlFor={id}>{children}</label>
+  <input
+        onChange={onInputChange}
+        id={id}
+        type={type}
+        value={value}
+      />
+  </>
+)
 
 
 const Thing = ({ thingsprops: { id, not_super } }) => <div>{id} : {not_super}A beautiful thing</div>
 
 const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other} />)
 
-const Search = ({ search, onSearch }) => {
+const Search = ({ searchTerm, onSearch }) => {
 
   return (
     <>
       <label htmlFor="search">Search:</label>
-      <input onChange={onSearch} id="search" type="text"></input>
-      <p>Searching for : {search}</p>
+      <input
+        onChange={onSearch}
+        id="search"
+        type="text"
+        value={searchTerm}
+      ></input>
+      <p>Searching for : {searchTerm}</p>
       <hr />
     </>
 
@@ -111,7 +127,9 @@ const App = () => {
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
-      <Search onSearch={handleChange} search={searchTerm} />
+    
+      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
+      <Search onSearch={handleChange} searchTerm={searchTerm} />
 
       <List list={searchedStories} other="Beautiful" />
 
