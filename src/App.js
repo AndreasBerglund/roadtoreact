@@ -50,14 +50,25 @@ const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {..
 const Search = ({ search, onSearch }) => {
 
   return (
-    <div>
+    <>
       <label htmlFor="search">Search:</label>
       <input onChange={onSearch} id="search" type="text"></input>
       <p>Searching for : {search}</p>
       <hr />
-    </div>
+    </>
 
   )
+}
+
+
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  )
+  React.useEffect(() => {
+    localStorage.setItem(key, value)
+  }, [value, key])
+  return [value, setValue]
 }
 
 const App = () => {
@@ -66,20 +77,11 @@ const App = () => {
     not_super: 'My SUPER'
   }
 
-
-
   const handleChange = ({ target: { value } }) => {
     setSearchTerm(value)
   }
 
-  const [searchTerm, setSearchTerm] = React.useState(
-    localStorage.getItem('search') || 'React'
-  );
-
-  React.useEffect(() => {
-    localStorage.setItem('search', searchTerm)
-  }, [searchTerm])
-
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
   const stories = [
     {
