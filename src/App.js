@@ -11,12 +11,12 @@ const styles = {
 
 
 
-const whyTheHell = () => {
+/* const whyTheHell = () => {
   alert(
 
     'Why the hell!'
   )
-}
+} */
 
 const welcome = {
   greeting: 'Hey',
@@ -41,23 +41,35 @@ const Item = ({ title, url, author, num_comments, points, other }) => (
   </div>
 )
 
-const InputWithLabel = ({id, type = 'text', value, onInputChange, children}) => (
+const InputWithLabel = ({id, type = 'text', value, onInputChange, isFocused, children}) => {
+const inputRef = React.useRef();
+
+React.useEffect( () => {
+  if (isFocused && inputRef.current) {
+    inputRef.current.focus();
+  }
+}, [isFocused])
+
+return (
   <>
   <label htmlFor={id}>{children}</label>
   <input
+        ref={inputRef}
         onChange={onInputChange}
         id={id}
         type={type}
+        // autoFocus={isFocused}
         value={value}
       />
   </>
 )
+}
 
 
 const Thing = ({ thingsprops: { id, not_super } }) => <div>{id} : {not_super}A beautiful thing</div>
 
 const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other} />)
-
+/* 
 const Search = ({ searchTerm, onSearch }) => {
 
   return (
@@ -75,7 +87,7 @@ const Search = ({ searchTerm, onSearch }) => {
 
   )
 }
-
+ */
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -128,9 +140,8 @@ const App = () => {
       <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
     
-      <InputWithLabel id="search" label="Search" value={searchTerm} onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
-      <Search onSearch={handleChange} searchTerm={searchTerm} />
-
+      <InputWithLabel id="search" label="Search" value={searchTerm} isFocused onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
+  
       <List list={searchedStories} other="Beautiful" />
 
     </div>
