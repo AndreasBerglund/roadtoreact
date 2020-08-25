@@ -31,23 +31,17 @@ function getTitle(title) {
 }
 
 
-const Item = ({ item, onRemoveItem, other }) => {
-  
-  const handleRemoveItem = () => {
-    onRemoveItem(item)
-  }
-  return (
+const Item = ({ item, onRemoveItem, other }) => (
   <div>
     <span>
       <a href={item.url}>{item.title}</a>
     </span>
     <span>{item.author}</span>
     <span>{other}</span>
-    <button type="button" onClick={handleRemoveItem}>remove</button>
+    <button type="button" onClick={() => { onRemoveItem(item) }}>remove</button>
   </div>
-
 )
-}
+
 
 const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, children }) => {
   const inputRef = React.useRef();
