@@ -31,29 +31,37 @@ function getTitle(title) {
 }
 
 
-const Item = ({ title, url, author, num_comments, points, other }) => (
+const Item = ({ item, onRemoveItem, other }) => {
+  
+  const handleRemoveItem = () => {
+    onRemoveItem(item)
+  }
+  return (
   <div>
     <span>
-      <a href={url}>{title}</a>
+      <a href={item.url}>{item.title}</a>
     </span>
-    <span>{author}</span>
+    <span>{item.author}</span>
     <span>{other}</span>
+    <button type="button" onClick={handleRemoveItem}>remove</button>
   </div>
+
 )
+}
 
-const InputWithLabel = ({id, type = 'text', value, onInputChange, isFocused, children}) => {
-const inputRef = React.useRef();
+const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, children }) => {
+  const inputRef = React.useRef();
 
-React.useEffect( () => {
-  if (isFocused && inputRef.current) {
-    inputRef.current.focus();
-  }
-}, [isFocused])
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused])
 
-return (
-  <>
-  <label htmlFor={id}>{children}</label>
-  <input
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      <input
         ref={inputRef}
         onChange={onInputChange}
         id={id}
@@ -61,14 +69,14 @@ return (
         // autoFocus={isFocused}
         value={value}
       />
-  </>
-)
+    </>
+  )
 }
 
 
 const Thing = ({ thingsprops: { id, not_super } }) => <div>{id} : {not_super}A beautiful thing</div>
 
-const List = ({ list, other }) => list.map(item => <Item key={item.objectID} {...item} other={other} />)
+const List = ({ list, other, onRemoveItem }) => list.map(item => <Item key={item.objectID} item={item} other={other} onRemoveItem={onRemoveItem} />)
 /* 
 const Search = ({ searchTerm, onSearch }) => {
 
@@ -111,7 +119,7 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
-  const stories = [
+  const initialStories = [
     {
       title: 'React',
       url: 'https://react.org',
@@ -132,6 +140,15 @@ const App = () => {
 
   ]
 
+  const [stories, setStories] = React.useState(initialStories);
+
+  const handleRemoveStory = item => {
+    const newStories = stories.filter(
+      story => item.objectID !== story.objectID
+    )
+    setStories(newStories)
+  }
+
   const searchedStories = stories.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -139,10 +156,10 @@ const App = () => {
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
-    
+
       <InputWithLabel id="search" label="Search" value={searchTerm} isFocused onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
-  
-      <List list={searchedStories} other="Beautiful" />
+
+      <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
 
     </div>
   )
