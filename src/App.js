@@ -134,7 +134,25 @@ const App = () => {
 
   ]
 
-  const [stories, setStories] = React.useState(initialStories);
+  const [count, setCount] = React.useState(0);
+  React.useEffect( ()=> {
+    document.title = 'You clicked :' + count;
+  }, [count])
+
+  //async
+  const getAsyncStories = () =>
+    new Promise( resolve => {
+      setTimeout( () => resolve({ data: { stories: initialStories } }), 500)
+    })
+
+
+  const [stories, setStories] = React.useState([]);
+
+  React.useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories)
+    })
+  }, []);
 
   const handleRemoveStory = item => {
     const newStories = stories.filter(
@@ -154,6 +172,8 @@ const App = () => {
       <InputWithLabel id="search" label="Search" value={searchTerm} isFocused onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
 
       <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
+
+      <button onClick={ () => setCount(count + 1)}>Clic m,e</button>
 
     </div>
   )
