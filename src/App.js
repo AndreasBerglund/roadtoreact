@@ -135,23 +135,27 @@ const App = () => {
   ]
 
   const [count, setCount] = React.useState(0);
-  React.useEffect( ()=> {
+  React.useEffect(() => {
     document.title = 'You clicked :' + count;
   }, [count])
 
   //async
   const getAsyncStories = () =>
-    new Promise( resolve => {
-      setTimeout( () => resolve({ data: { stories: initialStories } }), 500)
+    new Promise(resolve => {
+      setTimeout(() => resolve({ data: { stories: initialStories } }), 500)
     })
 
 
   const [stories, setStories] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
+    setIsLoading(true);
     getAsyncStories().then(result => {
       setStories(result.data.stories)
-    })
+      setIsLoading(false)
+    }).catch(() => setIsError(true));
   }, []);
 
   const handleRemoveStory = item => {
@@ -170,10 +174,18 @@ const App = () => {
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
 
       <InputWithLabel id="search" label="Search" value={searchTerm} isFocused onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
+      <hr />
 
-      <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
+      {isError && <p>Something went wrong...</p>}
 
-      <button onClick={ () => setCount(count + 1)}>Clic m,e</button>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) :
+
+        <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
+
+      }
+      <button onClick={() => setCount(count + 1)}>Clic m,e</button>
 
     </div>
   )
