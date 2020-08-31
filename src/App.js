@@ -12,7 +12,7 @@ const styles = {
 
 const storiesReducer = (state, action) => {
 
-  switch( action.type) {
+  switch (action.type) {
     case 'STORIES_FETCH_INIT':
       return {
         ...state,
@@ -30,12 +30,12 @@ const storiesReducer = (state, action) => {
       return {
         ...state,
         isLoading: false,
-        isError : true,
+        isError: true,
       };
     case 'REMOVE_STORY':
       return {
         ...state,
-        data : state.data.filter(
+        data: state.data.filter(
           story => action.payload.objectID != story.objectID
         )
       };
@@ -169,10 +169,33 @@ const App = () => {
 
   ]
 
-  const [count, setCount] = React.useState(0);
+
+  const counterReducer = (state, action) => {
+    switch (action.type) {
+      case 'COUNTER_INCREASE':
+        return state + 1;
+      case 'COUNTER_DECREASE':
+        return state - 1;
+      default:
+        throw new Error();
+    }
+  }
+
+  
+
+  const [count, countDispatch] = React.useReducer(counterReducer, 0);
+
+  const handleIncrease = () => {
+    countDispatch({type: 'COUNTER_INCREASE'})
+  }
+  const handleDecrease = () => {
+    countDispatch({type: 'COUNTER_DECREASE'})
+  }
+  
   React.useEffect(() => {
     document.title = 'You clicked :' + count;
-  }, [count])
+  }, [count]);
+
 
   //async
   const getAsyncStories = () =>
@@ -180,8 +203,8 @@ const App = () => {
 
     }) */
     new Promise((resolve, reject) => {
-      //setTimeout(() => resolve({ data: { stories: initialStories } }), 500)
-      setTimeout(reject, 2000)
+      setTimeout(() => resolve({ data: { stories: initialStories } }), 500)
+      //setTimeout(reject, 2000)
     })
 
 
@@ -196,17 +219,17 @@ const App = () => {
  */
 
   React.useEffect(() => {
-    
-    
+
+
     //setIsLoading(true);
-    
-    dispatchStories({ type: 'STORIES_FETCH_INIT'});
-    
+
+    dispatchStories({ type: 'STORIES_FETCH_INIT' });
+
     getAsyncStories().then(result => {
       //setStories(result.data.stories)
       dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories })
-      
-    }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE'}));
+
+    }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
   }, []);
 
   const handleRemoveStory = item => {
@@ -237,7 +260,10 @@ const App = () => {
         <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
 
       }
-      <button onClick={() => setCount(count + 1)}>Clic m,e</button>
+      <button onClick={handleIncrease}>INCREASE</button>
+    <p>Count: {count}</p>
+      <button onClick={handleDecrease}>DECREASE</button>
+
 
     </div>
   )
