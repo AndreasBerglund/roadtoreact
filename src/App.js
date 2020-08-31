@@ -181,17 +181,17 @@ const App = () => {
     }
   }
 
-  
+
 
   const [count, countDispatch] = React.useReducer(counterReducer, 0);
 
   const handleIncrease = () => {
-    countDispatch({type: 'COUNTER_INCREASE'})
+    countDispatch({ type: 'COUNTER_INCREASE' })
   }
   const handleDecrease = () => {
-    countDispatch({type: 'COUNTER_DECREASE'})
+    countDispatch({ type: 'COUNTER_DECREASE' })
   }
-  
+
   React.useEffect(() => {
     document.title = 'You clicked :' + count;
   }, [count]);
@@ -218,18 +218,22 @@ const App = () => {
   const [isError, setIsError] = React.useState(false);
  */
 
+  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+
+
   React.useEffect(() => {
-
-
-    //setIsLoading(true);
-
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    getAsyncStories().then(result => {
+    fetch(`${API_ENDPOINT}react`).then(  response => response.json()).then( result => { dispatchStories({
+      type: 'STORIES_FETCH_SUCCESS',
+      payload: result.hits
+    })})
+
+/*     getAsyncStories().then(result => {
       //setStories(result.data.stories)
       dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories })
 
-    }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' }));
+    }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' })); */
   }, []);
 
   const handleRemoveStory = item => {
@@ -261,7 +265,7 @@ const App = () => {
 
       }
       <button onClick={handleIncrease}>INCREASE</button>
-    <p>Count: {count}</p>
+      <p>Count: {count}</p>
       <button onClick={handleDecrease}>DECREASE</button>
 
 
