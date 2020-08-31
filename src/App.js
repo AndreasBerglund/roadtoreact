@@ -233,7 +233,7 @@ const App = () => {
   }, []);
 
   const handleRemoveStory = item => {
-    const newStories = stories.filter(
+    const newStories = stories.data.filter(
       story => item.objectID !== story.objectID
     )
     //setStories(newStories)
