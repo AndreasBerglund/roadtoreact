@@ -3,7 +3,7 @@ import React from 'react'
 const styles = {
 
   color: '#202020',
-  fontSize: '4em',
+  fontSize: '2em',
   width: '100%',
   textAlign: 'center'
 
@@ -146,7 +146,7 @@ const App = () => {
     setSearchTerm(value)
   }
 
-  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', '');
 
   const initialStories = [
     {
@@ -222,19 +222,20 @@ const App = () => {
 
 
   React.useEffect(() => {
+    if (searchTerm == '') return;
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(`${API_ENDPOINT}react`).then(  response => response.json()).then( result => { dispatchStories({
+    fetch(`${API_ENDPOINT}${searchTerm}`).then(  response => response.json()).then( result => { dispatchStories({
       type: 'STORIES_FETCH_SUCCESS',
       payload: result.hits
-    })})
+    })}).catch( () => dispatchStories({type:'STORIES_FETCH_FAILURE'}))
 
 /*     getAsyncStories().then(result => {
       //setStories(result.data.stories)
       dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories })
 
     }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' })); */
-  }, []);
+  }, [searchTerm]);
 
   const handleRemoveStory = item => {
     const newStories = stories.data.filter(
@@ -244,9 +245,11 @@ const App = () => {
     dispatchStories({ type: 'REMOVE_STORY', payload: item })
   }
 
-  const searchedStories = stories.data.filter(story =>
+  /* const searchedStories = stories.data.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
+ */
+
   return (
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
@@ -261,7 +264,7 @@ const App = () => {
         <p>Loading...</p>
       ) :
 
-        <List list={searchedStories} other="Beautiful" onRemoveItem={handleRemoveStory} />
+        <List list={stories.data} other="Beautiful" onRemoveItem={handleRemoveStory} />
 
       }
       <button onClick={handleIncrease}>INCREASE</button>
