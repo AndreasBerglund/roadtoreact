@@ -219,23 +219,25 @@ const App = () => {
  */
 
   const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
-
+    const handleFetchStories = React.useCallback( () => {
+      if (searchTerm == '') return;
+      dispatchStories({ type: 'STORIES_FETCH_INIT' });
+  
+      fetch(`${API_ENDPOINT}${searchTerm}`).then(  response => response.json()).then( result => { dispatchStories({
+        type: 'STORIES_FETCH_SUCCESS',
+        payload: result.hits
+      })}).catch( () => dispatchStories({type:'STORIES_FETCH_FAILURE'}))
+  
+    }, [searchTerm])
 
   React.useEffect(() => {
-    if (searchTerm == '') return;
-    dispatchStories({ type: 'STORIES_FETCH_INIT' });
-
-    fetch(`${API_ENDPOINT}${searchTerm}`).then(  response => response.json()).then( result => { dispatchStories({
-      type: 'STORIES_FETCH_SUCCESS',
-      payload: result.hits
-    })}).catch( () => dispatchStories({type:'STORIES_FETCH_FAILURE'}))
-
+handleFetchStories()
 /*     getAsyncStories().then(result => {
       //setStories(result.data.stories)
       dispatchStories({ type: 'STORIES_FETCH_SUCCESS', payload: result.data.stories })
 
     }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' })); */
-  }, [searchTerm]);
+  }, [handleFetchStories]);
 
   const handleRemoveStory = item => {
     const newStories = stories.data.filter(
