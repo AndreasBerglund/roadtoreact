@@ -145,8 +145,16 @@ const App = () => {
   const handleChange = ({ target: { value } }) => {
     setSearchTerm(value)
   }
+  const handleSearchSubmit = () => {
+    setUrl( `${API_ENDPOINT}${searchTerm}`)
+  }
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', '');
+  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+  const [url, setUrl] = React.useState(
+    `${API_ENDPOINT}${searchTerm}`
+  );
+
 
   const initialStories = [
     {
@@ -218,17 +226,17 @@ const App = () => {
   const [isError, setIsError] = React.useState(false);
  */
 
-  const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+
     const handleFetchStories = React.useCallback( () => {
       if (searchTerm == '') return;
       dispatchStories({ type: 'STORIES_FETCH_INIT' });
   
-      fetch(`${API_ENDPOINT}${searchTerm}`).then(  response => response.json()).then( result => { dispatchStories({
+      fetch(url).then(  response => response.json()).then( result => { dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
         payload: result.hits
       })}).catch( () => dispatchStories({type:'STORIES_FETCH_FAILURE'}))
   
-    }, [searchTerm])
+    }, [url])
 
   React.useEffect(() => {
 handleFetchStories()
@@ -257,7 +265,16 @@ handleFetchStories()
       <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
 
-      <InputWithLabel id="search" label="Search" value={searchTerm} isFocused onInputChange={handleChange} ><strong>Search:</strong></InputWithLabel >
+      <InputWithLabel 
+        id="search" 
+        label="Search" 
+        value={searchTerm} 
+        isFocused 
+        onInputChange={handleChange} >
+          
+        <strong>Search:</strong>
+        </InputWithLabel >
+        <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>Submit search</button>
       <hr />
 
       {stories.isError && <p>Something went wrong...</p>}
