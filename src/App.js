@@ -146,8 +146,9 @@ const App = () => {
   const handleChange = ({ target: { value } }) => {
     setSearchTerm(value)
   }
-  const handleSearchSubmit = () => {
-    setUrl( `${API_ENDPOINT}${searchTerm}`)
+  const handleSearchSubmit = event => {
+    setUrl( `${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   }
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', '');
@@ -178,6 +179,23 @@ const App = () => {
 
   ]
 
+  
+  const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit}) => {
+    return(
+      <form onSubmit={onSearchSubmit}>
+      <InputWithLabel 
+        id="search" 
+        label="Search" 
+        value={searchTerm} 
+        isFocused 
+        onInputChange={onSearchInput} >
+          
+        <strong>Search:</strong>
+        </InputWithLabel >
+        <button type="submit" disabled={!searchTerm} >Submit search</button>
+        </form>
+    )
+  }
 
   const counterReducer = (state, action) => {
     switch (action.type) {
@@ -273,17 +291,7 @@ handleFetchStories()
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
       <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
-
-      <InputWithLabel 
-        id="search" 
-        label="Search" 
-        value={searchTerm} 
-        isFocused 
-        onInputChange={handleChange} >
-          
-        <strong>Search:</strong>
-        </InputWithLabel >
-        <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>Submit search</button>
+    <SearchForm searchTerm={searchTerm} onSearchInput={handleChange}  onSearchSubmit={handleSearchSubmit} />
       <hr />
 
       {stories.isError && <p>Something went wrong...</p>}
