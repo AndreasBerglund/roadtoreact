@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
 
+import InputWithLabelClass from './components/InputWithLabel';
+
 const styles = {
 
   color: '#202020',
@@ -192,6 +194,18 @@ const App = () => {
           
         <strong>Search:</strong>
         </InputWithLabel >
+
+        <InputWithLabelClass 
+        id="search" 
+        label="Search" 
+        value={searchTerm} 
+        isFocused 
+        onInputChange={onSearchInput} >
+          
+        <strong>Search:</strong>
+        </InputWithLabelClass >
+
+        
         <button type="submit" disabled={!searchTerm} >Submit search</button>
         </form>
     )
