@@ -1,6 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 
+import './App.scss'
+
+
 import InputWithLabelClass from './components/InputWithLabel';
 
 const styles = {
@@ -70,13 +73,13 @@ function getTitle(title) {
 
 
 const Item = ({ item, onRemoveItem, other }) => (
-  <div>
-    <span>
+  <div className='item'>
+    <span style={{ width: '40%' }}>
       <a href={item.url}>{item.title}</a>
     </span>
-    <span>{item.author}</span>
-    <span>{other}</span>
-    <button type="button" onClick={() => { onRemoveItem(item) }}>remove</button>
+    <span style={{ width: '30%' }}>{item.author}</span>
+    <span style={{ width: '10%' }}>{other}</span>
+    <button type="button" className="button button_small" onClick={() => { onRemoveItem(item) }}>remove</button>
   </div>
 )
 
@@ -304,9 +307,9 @@ handleFetchStories()
   return (
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
-      <h1>{welcome.greeting} {getTitle('Bittttte')}</h1>
+      <h1 className="headline-primary">{welcome.greeting} {getTitle('Bittttte')}</h1>
     <SearchForm searchTerm={searchTerm} onSearchInput={handleChange}  onSearchSubmit={handleSearchSubmit} />
-      <hr />
+  
 
       {stories.isError && <p>Something went wrong...</p>}
 
