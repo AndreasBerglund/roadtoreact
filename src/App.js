@@ -3,8 +3,14 @@ import axios from 'axios';
 
 import './App.scss'
 
+import styled from 'styled-components';
+
 
 import InputWithLabelClass from './components/InputWithLabel';
+import Button from './components/Button';
+
+
+
 
 const styles = {
 
@@ -15,6 +21,16 @@ const styles = {
 
 }
 
+
+const StyledContainer = styled.div`
+
+height: 100vw;
+padding: 20px;
+background: #83a4d4;
+background: linear-gradient(to left, #b6fbff, #83a4d4);
+color: #171212;
+
+`;
 
 const storiesReducer = (state, action) => {
 
@@ -95,7 +111,7 @@ const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, ch
 
   return (
     <>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id} className="label" >{children}</label>
       <input
         ref={inputRef}
         onChange={onInputChange}
@@ -103,6 +119,7 @@ const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, ch
         type={type}
         // autoFocus={isFocused}
         value={value}
+        className="input"
       />
     </>
   )
@@ -187,7 +204,7 @@ const App = () => {
   
   const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit}) => {
     return(
-      <form onSubmit={onSearchSubmit}>
+      <form onSubmit={onSearchSubmit} className="search-form">
       <InputWithLabel 
         id="search" 
         label="Search" 
@@ -207,9 +224,7 @@ const App = () => {
           
         <strong>Search:</strong>
         </InputWithLabelClass >
-
-        
-        <button type="submit" disabled={!searchTerm} >Submit search</button>
+        <Button type="submit"  disabled={!searchTerm} className="button_large">Submit search</Button>
         </form>
     )
   }
@@ -305,6 +320,7 @@ handleFetchStories()
  */
 
   return (
+    <StyledContainer>
     <div style={styles}>
       <Thing thingsprops={ThingsProps} />
       <h1 className="headline-primary">{welcome.greeting} {getTitle('Bittttte')}</h1>
@@ -320,12 +336,14 @@ handleFetchStories()
         <List list={stories.data} other="Beautiful" onRemoveItem={handleRemoveStory} />
 
       }
+ 
       <button onClick={handleIncrease}>INCREASE</button>
       <p>Count: {count}</p>
       <button onClick={handleDecrease}>DECREASE</button>
 
 
     </div>
+</StyledContainer>
   )
 }
 
