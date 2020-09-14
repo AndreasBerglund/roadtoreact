@@ -4,6 +4,12 @@ button {
     padding: 5px;
     cursor: pointer;
     transition: all .1s ease-in;
+
+}
+
+.button:hover > svg > g {
+    fill: #fff;
+    stroke: #fff;
 }
 
 .button_small {
