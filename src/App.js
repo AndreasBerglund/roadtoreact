@@ -318,8 +318,8 @@ const App = () => {
   )
  */
 
- const sumComments = getSumComments(stories);
-
+ const sumComments = React.useMemo( () => getSumComments(stories), [] );
+ //const sumComments = getSumComments(stories);
   return (
     <StyledContainer>
       <div style={styles}>
