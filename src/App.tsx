@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import axios from 'axios';
 
 import './App.scss'
@@ -6,10 +6,16 @@ import './App.scss'
 import styled from 'styled-components';
 
 
-import InputWithLabelClass from './components/InputWithLabel';
+
+
+
 import Button from './components/Button';
 
 import { ReactComponent as Check } from './check.svg';
+
+
+//import InputWithLabelClass from './components/InputWithLabel';
+
 
 
 const styles = {
@@ -32,7 +38,59 @@ color: #171212;
 
 `;
 
-const storiesReducer = (state, action) => {
+type Story = {
+  objectID: string;
+  url: string;
+  title: string;
+  author: string;
+  num_comments: string;
+  points: number;
+}
+type Stories = Array<Story>;
+
+
+//STORY TYPE STATE FOR STORY rEDUCER
+type StoriesState = {
+  data: Stories,
+  isLoading: boolean,
+  isError: boolean
+}
+
+//TYPE FOR ACTION TYPE IN REDUCER
+interface StoriesFetchInitAction {
+  type : 'STORIES_FETCH_INIT';
+}
+interface StoriesFetchSuccessAction {
+  type : 'STORIES_FETCH_SUCCESS';
+  payload: Stories;
+}
+interface StoriesFetchFailureAction {
+  type : 'STORIES_FETCH_FAILURE';
+}
+interface StoriesRemoveAction {
+  type: 'REMOVE_STORY';
+  payload: Story;
+}
+
+type StoriesAction = 
+| StoriesFetchInitAction
+| StoriesFetchSuccessAction
+| StoriesFetchFailureAction
+| StoriesRemoveAction;
+
+
+type ListProps = {
+  list: Stories;
+  onRemoveItem: (item: Story) => void;
+}
+
+type ItemProps = {
+  item: Story;
+  onRemoveItem: (item: Story) => void;
+};
+
+
+const storiesReducer = (state: StoriesState, action: StoriesAction) => {
 
   switch (action.type) {
     case 'STORIES_FETCH_INIT':
@@ -68,22 +126,21 @@ const storiesReducer = (state, action) => {
 }
 
 
-const getSumComments = stories => {
+/* const getSumComments = (stories : Stories ) => {
   console.log('C');
   return stories.data.reduce(
-    (result,value) => result + value.num_comments, 0
+    (result, value) => result + value.num_comments, 0
   )
 }
+ */
 
 
-
-const Item = ({ item, onRemoveItem, other }) => (
+const Item = ({ item, onRemoveItem }: ItemProps) => (
   <div className='item'>
     <span style={{ width: '40%' }}>
       <a href={item.url}>{item.title}</a>
     </span>
     <span style={{ width: '30%' }}>{item.author}</span>
-    <span style={{ width: '10%' }}>{other}</span>
     <button type="button" className="button button_small" onClick={() => { onRemoveItem(item) }}>
       <Check height="18px" width="18px" />
     </button>
@@ -91,9 +148,18 @@ const Item = ({ item, onRemoveItem, other }) => (
   </div>
 )
 
+type InputWithLabelProps = {
+  id : string;
+  label : string;
+  type? : string;
+  value : string;
+  onInputChange : ( event: React.ChangeEvent<HTMLInputElement>) => void;
+  isFocused : boolean;
+  children : React.ReactNode;
+};
 
-const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, children }) => {
-  const inputRef = React.useRef();
+const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, children }: InputWithLabelProps)  => {
+  const inputRef = React.useRef<HTMLInputElement>(null!);
 
   React.useEffect(() => {
     if (isFocused && inputRef.current) {
@@ -117,20 +183,24 @@ const InputWithLabel = ({ id, type = 'text', value, onInputChange, isFocused, ch
   )
 }
 
-
+/* 
 const Thing = ({ thingsprops: { id, not_super } }) => <div>{id} : {not_super}A beautiful thing</div>
+ */
+
 
 const List = React.memo(
-  ({ list, other, onRemoveItem }) =>
-    console.log('B:list') ||
-    list.map(item => <Item
+  ({ list, onRemoveItem }: ListProps) =>
+    (
+    <>
+    {list.map(item => <Item
       key={item.objectID}
       item={item}
-      other={other}
       onRemoveItem={onRemoveItem}
-    />
+    />)}
+    
+    </>
     )
-)
+);
 /* 
 const Search = ({ searchTerm, onSearch }) => {
 
@@ -151,7 +221,7 @@ const Search = ({ searchTerm, onSearch }) => {
 }
  */
 
-const useSemiPersistentState = (key, initialState) => {
+const useSemiPersistentState = (key: string, initialState: string): [string, (newValue: string) => void] => {
 
   const isMounted = React.useRef(false);
   const [value, setValue] = React.useState(
@@ -176,10 +246,10 @@ const App = () => {
 
   console.log('B:App');
 
-  const handleChange = ({ target: { value } }) => {
-    setSearchTerm(value)
+  const handleChange = ( event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value)
   }
-  const handleSearchSubmit = event => {
+  const handleSearchSubmit = (event : React.FormEvent<HTMLFormElement> )=> {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
     event.preventDefault();
   }
@@ -212,8 +282,15 @@ const App = () => {
 
   ]
 
+  type SearchFormProps = {
+    searchTerm : string;
+    onSearchInput : ( event : React.ChangeEvent<HTMLInputElement>) => void;
+    onSearchSubmit : ( event : React.FormEvent<HTMLFormElement>)  => void;
+  }
+  
+  
 
-  const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit } : SearchFormProps) => {
     return (
       <form onSubmit={onSearchSubmit} className="search-form">
         <InputWithLabel
@@ -226,7 +303,7 @@ const App = () => {
           <strong>Search:</strong>
         </InputWithLabel >
 
-        <InputWithLabelClass
+        <InputWithLabel
           id="search"
           label="Search"
           value={searchTerm}
@@ -234,13 +311,28 @@ const App = () => {
           onInputChange={onSearchInput} >
 
           <strong>Search:</strong>
-        </InputWithLabelClass >
+        </InputWithLabel>
         <Button type="submit" disabled={!searchTerm} className="button_large">Submit search</Button>
       </form>
     )
   }
 
-  const counterReducer = (state, action) => {
+  type counterState = {
+    number : number;
+  }
+
+  interface CounterIncreaseAction {
+    type : 'COUNTER_INCREASE';
+  }
+  interface CounterDecreaseAction {
+    type : 'COUNTER_DECREASE';
+  }
+
+  type counterAction = 
+  | CounterIncreaseAction
+| CounterDecreaseAction;
+
+  const counterReducer = (state : number, action: counterAction) => {
     switch (action.type) {
       case 'COUNTER_INCREASE':
         return state + 1;
@@ -277,6 +369,7 @@ const App = () => {
  */
 
 
+
   const handleFetchStories = React.useCallback(async () => {
     if (searchTerm == '') return;
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
@@ -305,7 +398,7 @@ const App = () => {
         }).catch(() => dispatchStories({ type: 'STORIES_FETCH_FAILURE' })); */
   }, [handleFetchStories]);
 
-  const handleRemoveStory = React.useCallback( item => {
+  const handleRemoveStory = React.useCallback((item: Story) => {
     const newStories = stories.data.filter(
       story => item.objectID !== story.objectID
     )
@@ -318,13 +411,13 @@ const App = () => {
   )
  */
 
- const sumComments = React.useMemo( () => getSumComments(stories), [] );
- //const sumComments = getSumComments(stories);
+  //const sumComments = React.useMemo(() => getSumComments(stories), []);
+  //const sumComments = getSumComments(stories);
   return (
-    <StyledContainer>
-      <div style={styles}>
-        <Thing thingsprops={ThingsProps} />
-  <h1 className="headline-primary">{ sumComments }</h1>
+
+     
+    <>
+        <h1 className="headline-primary">{ 'shit '}</h1>
         <SearchForm searchTerm={searchTerm} onSearchInput={handleChange} onSearchSubmit={handleSearchSubmit} />
 
 
@@ -334,7 +427,7 @@ const App = () => {
           <p>Loading...</p>
         ) :
 
-          <List list={stories.data} other="Beautiful" onRemoveItem={handleRemoveStory} />
+          <List list={stories.data} onRemoveItem={handleRemoveStory} />
 
         }
 
@@ -343,8 +436,8 @@ const App = () => {
         <button onClick={handleDecrease}>DECREASE</button>
 
 
-      </div>
-    </StyledContainer>
+  </>
+  
   )
 }
 
