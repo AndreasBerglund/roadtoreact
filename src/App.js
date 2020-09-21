@@ -12,6 +12,7 @@ import Button from './components/Button';
 import { ReactComponent as Check } from './check.svg';
 
 
+
 const styles = {
 
   color: '#202020',
@@ -150,7 +151,32 @@ const Search = ({ searchTerm, onSearch }) => {
   )
 }
  */
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+  return (
+    <form onSubmit={onSearchSubmit} className="search-form">
+      <InputWithLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        isFocused
+        onInputChange={onSearchInput} >
 
+        <strong>Search:</strong>
+      </InputWithLabel >
+
+      <InputWithLabelClass
+        id="search"
+        label="Search"
+        value={searchTerm}
+        isFocused
+        onInputChange={onSearchInput} >
+
+        <strong>Search:</strong>
+      </InputWithLabelClass >
+      <Button type="submit" disabled={!searchTerm} className="button_large">Submit search</Button>
+    </form>
+  )
+}
 const useSemiPersistentState = (key, initialState) => {
 
   const isMounted = React.useRef(false);
@@ -213,32 +239,7 @@ const App = () => {
   ]
 
 
-  const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
-    return (
-      <form onSubmit={onSearchSubmit} className="search-form">
-        <InputWithLabel
-          id="search"
-          label="Search"
-          value={searchTerm}
-          isFocused
-          onInputChange={onSearchInput} >
 
-          <strong>Search:</strong>
-        </InputWithLabel >
-
-        <InputWithLabelClass
-          id="search"
-          label="Search"
-          value={searchTerm}
-          isFocused
-          onInputChange={onSearchInput} >
-
-          <strong>Search:</strong>
-        </InputWithLabelClass >
-        <Button type="submit" disabled={!searchTerm} className="button_large">Submit search</Button>
-      </form>
-    )
-  }
 
   const counterReducer = (state, action) => {
     switch (action.type) {
@@ -348,4 +349,6 @@ const App = () => {
   )
 }
 
-export default App
+export default App;
+
+export {storiesReducer, InputWithLabel, List, Item, SearchForm };
