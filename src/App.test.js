@@ -1,5 +1,10 @@
 import React from 'react';
-
+import {
+  render,
+  screen,
+  fireEvent,
+  act
+} from '@testing-library/react';
 import App, { List, Item, storiesReducer, SearchForm } from './App';
 
 const storyOne = {
@@ -59,3 +64,34 @@ describe('App components', () => {
 
   });
 })
+
+
+describe('Item', ()=> {
+  test('renders all properties',  ()=> {
+    render( <Item item={storyOne} />);
+    //screen.debug();
+    
+    
+    //assertive testing
+    expect(screen.getByText('Jordan Walke')).toBeInTheDocument();
+    expect(screen.getByText('React')).toHaveAttribute(
+      'href',
+      'https://reactjs.org/'
+    );
+  });
+
+  test('renaders a clickable dismiss button', ()=> {
+    render(<Item item={storyOne} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+
+  test('clicking calls the handler', ()=> {
+    const handleRemoveItem = jest.fn();
+    render(<Item item={storyOne} onRemoveItem={handleRemoveItem} />);
+    
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleRemoveItem).toHaveBeenCalledTimes(1);
+  });
+
+});
