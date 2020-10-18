@@ -164,7 +164,7 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
         <strong>Search:</strong>
       </InputWithLabel >
 
-      <InputWithLabelClass
+    {/*   <InputWithLabelClass
         id="search"
         label="Search"
         value={searchTerm}
@@ -172,7 +172,7 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
         onInputChange={onSearchInput} >
 
         <strong>Search:</strong>
-      </InputWithLabelClass >
+      </InputWithLabelClass > */}
       <Button type="submit" disabled={!searchTerm} className="button_large">Submit search</Button>
     </form>
   )

@@ -91,7 +91,30 @@ describe('Item', ()=> {
     render(<Item item={storyOne} onRemoveItem={handleRemoveItem} />);
     
     fireEvent.click(screen.getByRole('button'));
-    expect(handleRemoveItem).toHaveBeenCalledTimes(1);
-  });
+    expect(handleRemoveItem).toHaveBeenCalledTimes(1); });
 
 });
+
+
+describe('SearchForm', ()=> {
+
+  const searchFormProps = {
+    searchTerm : 'React',
+    onSearchInput : jest.fn(),
+    onSearchSubmit : jest.fn()
+  }
+
+ test('reander the input field with its value', ()=> {
+  render(<SearchForm {...searchFormProps} />);
+  //screen.debug();
+  expect( screen.getByDisplayValue('React') ).toBeInTheDocument();
+
+})
+
+test('renders the coorect lavbel', () => {
+  render(<SearchForm {...searchFormProps} />);
+  expect(screen.getByLabelText(/Search/)).toBeInTheDocument();
+
+})
+  
+})
